@@ -1,0 +1,7 @@
+# Request
+# Empty - adjusts all objects based on current grounded state
+---
+# Response
+bool success
+string message
+

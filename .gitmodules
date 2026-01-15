@@ -1,0 +1,16 @@
+[submodule "src/ros2_numpy"]
+	path = src/ros2_numpy
+	url = https://github.com/red-lightning10/ros2_numpy
+[submodule "src/realsense-ros"]
+	path = src/realsense-ros
+	url = https://github.com/IntelRealSense/realsense-ros/
+[submodule "src/mnet_client"]
+	path = src/mnet_client
+	url = https://github.com/ManipulationNet/mnet_client
+[submodule "src/ur_elpis_setup"]
+	path = src/ur_elpis_setup
+	url = git@github.com:red-lightning10/ur_elpis_setup.git
+[submodule "src/moveit_task_constructor"]
+	path = src/moveit_task_constructor
+	url = git@github.com:red-lightning10/moveit_task_constructor.git
+	branch = humble

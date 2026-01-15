@@ -1,0 +1,11 @@
+# Request
+string goal                    # PDDL goal expression (e.g., "(AND (ON D C) (ON C B))")
+string[] grounded_predicates  # Grounded predicates from grounding service (e.g., ["ONTABLE cube_0", "CLEAR cube_1"])
+---
+# Response
+string action  # Action name (e.g., "pick-up", "stack")
+string[] args  # Action arguments (e.g., ["A"], ["A", "B"])
+bool success
+string message
+
+

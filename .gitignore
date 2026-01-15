@@ -1,0 +1,38 @@
+# ROS2 build artifacts
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.Python
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Conda
+*.egg-info/
+miniconda3/
+
+# Temporary files
+*.log
+*.tmp
+
+# Don't ignore the gripper library
+!src/grasping/lib/librh_p12_rna.so
+
+src/mnet_client/
+src/realsense-ros/

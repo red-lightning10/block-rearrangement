@@ -1,0 +1,10 @@
+# Request
+geometry_msgs/Point centroid               # 2D pixel coordinates (x, y)
+float32 depth                               # Depth value at centroid
+---
+
+# Response
+geometry_msgs/Point world_coords            # 3D world coordinates
+bool success
+string message
+

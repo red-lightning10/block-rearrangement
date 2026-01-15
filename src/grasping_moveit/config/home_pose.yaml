@@ -1,0 +1,11 @@
+home_pose:
+  position:
+    x: 0.1215
+    y: -0.745
+    z: 0.32325
+  orientation:
+    roll: 0.0
+    pitch: -3.14159
+    yaw: 0.0
+  frame_id: "ur10_base"
+

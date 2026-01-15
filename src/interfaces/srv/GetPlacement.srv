@@ -1,0 +1,10 @@
+# Request
+Detection[] detections
+int32 detection_index
+bool stack                # false for placing on table, true for placing on object
+---
+# Response
+geometry_msgs/Point centroid
+float32 depth
+bool success
+string message

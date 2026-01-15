@@ -1,0 +1,8 @@
+# Request (empty - no parameters needed)
+---
+# Response
+bool success
+string message
+int32 cleared_count
+
+

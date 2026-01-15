@@ -1,0 +1,9 @@
+# Request
+---
+
+# Response
+Detection[] detections    # Array of all detected objects
+sensor_msgs/Image[] masks # Array of segmentation masks (one per detection, same order)
+bool success
+string message
+

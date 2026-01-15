@@ -1,0 +1,6 @@
+# Request
+---
+# Response
+string[] grounded_predicates
+bool success
+string message

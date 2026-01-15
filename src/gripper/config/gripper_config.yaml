@@ -1,0 +1,50 @@
+# Hardware limits
+hardware:
+  min_position: 0              # Fully open position (encoder counts)
+  max_position: 740             # Fully closed position (encoder counts)
+  max_position_rad: 1.12        # Maximum position in radians
+  current_limit_ma: 300         # Current limit in milliamps
+  current_multiplier: 4.02      # Multiplier to convert raw current to mA
+  position_control_mode: 5      # Current-based position mode
+
+# Joint configuration
+joints:
+  names: ['rh_p12_rn', 'rh_r2', 'rh_l1', 'rh_l2']  # Gripper joint names
+
+# Library configuration
+library:
+  # Library path relative to package share directory
+  # Will be resolved to: <package_share>/../../lib/gripper/librh_p12_rna.so
+  relative_path: ['..', '..', 'lib', 'gripper', 'librh_p12_rna.so']
+
+# Action server configuration
+action_server:
+  position_tolerance_rad: 0.02      # Position tolerance in radians (~2% of max range)
+  position_tolerance_raw: 5         # Position tolerance in encoder counts (~0.7% of range)
+  movement_timeout: 5.0              # Timeout for gripper movement (seconds)
+  feedback_rate: 10.0               # Feedback publishing rate (Hz)
+  holding_sample_count: 10           # Number of samples for holding detection
+  holding_threshold_ratio: 0.9       # Ratio of current limit for holding detection (0.9 = 90%)
+  open_guard_threshold: 5            # Position threshold to avoid false positives when fully open
+  stall_detection_threshold: 2      # Position change threshold for stall detection (encoder counts)
+  stall_count_limit: 10             # Number of consecutive stall readings before considering stalled
+
+# Joint state merger configuration, change as required by namespace
+joint_state_merger:
+  ur_joint_states_topic: '/joint_states'
+  gripper_joint_states_topic: '/gripper_joint_states'
+  merged_joint_states_topic: '/joint_states'
+  queue_size: 10
+
+# Joint state publisher configuration
+joint_state_publisher:
+  publish_rate: 10.0                 # Publishing rate in Hz (1/0.1 = 10Hz)
+
+# Service configuration
+services:
+  is_holding_service: '/gripper/is_holding'
+
+# Action server topic
+actions:
+  gripper_command_action: 'gripper_controller/gripper_cmd'
+
