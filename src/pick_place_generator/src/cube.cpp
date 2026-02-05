@@ -1,7 +1,9 @@
 #include "pick_place_generator/cube.hpp"
+#include <cmath>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <tf2_eigen/tf2_eigen.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <tf2/utils.h>
 #include <Eigen/Geometry>
 #include <rclcpp/rclcpp.hpp>
 
@@ -64,14 +66,18 @@ std::vector<GraspCandidate> Cube::generateTopDownGrasps(
                object_pose.position.x, object_pose.position.y, object_pose.position.z);
   
   
-  // Generate two top-down grasp poses (0° and 180° rotation around Z)
-  // Top-down grasp: gripper approaches from above
-  // Base orientation: gripper pointing down (pitch = π, roll = 0, yaw = varies)
+  // Align grasp yaw with the detected object yaw in the table plane.
+  const double object_yaw = tf2::getYaw(object_pose.orientation);
+
+  // Generate two top-down grasp poses aligned to object yaw (0° and 90° around Z).
+  // Top-down grasp: gripper approaches from above.
+  // Base orientation: gripper pointing down (pitch = π, roll = 0, yaw = varies).
   for (int i = 0; i < 2; ++i) {
     GraspCandidate candidate;
     
-    // Yaw rotation: 0° and 180° (i * M_PI)
-    double yaw = i * M_PI;
+    // Keep wrist rotation limited by using quarter-turn alternatives.
+    const double yaw = std::atan2(std::sin(object_yaw + (i * (M_PI / 2.0))),
+                                  std::cos(object_yaw + (i * (M_PI / 2.0))));
     
     // Create grasp pose (at top of object)
     geometry_msgs::msg::Pose grasp_pose = convertTo6DPose(
@@ -89,9 +95,9 @@ std::vector<GraspCandidate> Cube::generateTopDownGrasps(
     candidate.pre_grasp_pose.header.frame_id = object_frame;
     candidate.pre_grasp_pose.pose = pre_grasp_pose;
     
-    RCLCPP_DEBUG(logger, "Generated grasp pose in frame '%s': (%.3f, %.3f, %.3f)", 
+    RCLCPP_DEBUG(logger, "Generated grasp pose in frame '%s': (%.3f, %.3f, %.3f), yaw=%.3f rad", 
                  object_frame.c_str(),
-                 candidate.grasp_pose.pose.position.x, candidate.grasp_pose.pose.position.y, candidate.grasp_pose.pose.position.z);
+                 candidate.grasp_pose.pose.position.x, candidate.grasp_pose.pose.position.y, candidate.grasp_pose.pose.position.z, yaw);
     
     candidates.push_back(candidate);
   }
@@ -116,4 +122,3 @@ std::vector<GraspCandidate> Cube::samplePlace(
 }
 
 }  // namespace pick_place_generator
-
