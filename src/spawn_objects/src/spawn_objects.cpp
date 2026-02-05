@@ -5,6 +5,7 @@
 #include <future>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <geometry_msgs/msg/pose.hpp>
@@ -37,13 +38,16 @@ int SpawnObjects::SpawnFromDetections(const std::vector<interfaces::msg::Detecti
   RCLCPP_INFO(logger_, "Spawning %zu objects in planning scene", detections.size());
 
   std::vector<moveit_msgs::msg::CollisionObject> collision_objects;
-  int spawned_count = 0, index = 0;
+  std::unordered_map<int, size_t> color_index_by_class;
+  int spawned_count = 0, detection_index = 0;
 
   for (const auto &detection : detections) {
-    std::string obj_name = MakeObjectName(detection.class_id, index);
+    const size_t color_index = color_index_by_class[detection.class_id]++;
+    std::string obj_name = MakeObjectName(detection.class_id, color_index);
 
     if (spawned_objects_.find(obj_name) != spawned_objects_.end()) {
       RCLCPP_WARN(logger_, "Object %s already spawned, skipping", obj_name.c_str());
+      detection_index++;
       continue;
     }
 
@@ -53,20 +57,22 @@ int SpawnObjects::SpawnFromDetections(const std::vector<interfaces::msg::Detecti
 
     auto project_future = project_client_->async_send_request(project_request);
     if (project_future.wait_for(std::chrono::seconds(5)) != std::future_status::ready) {
-      RCLCPP_WARN(logger_, "Failed to project detection %d to 3D coords (timeout)", index);
+      RCLCPP_WARN(logger_, "Failed to project detection %d to 3D coords (timeout)", detection_index);
+      detection_index++;
       continue;
     }
 
     auto project_response = project_future.get();
     if (!project_response->success) {
       RCLCPP_WARN(
-        logger_, "3D projection failed for detection %d: %s", index,
+        logger_, "3D projection failed for detection %d: %s", detection_index,
         project_response->message.c_str());
+      detection_index++;
       continue;
     }
 
     geometry_msgs::msg::Point cube_center_base = 
-      ComputeCubeCenter(project_response->world_coords, index);
+      ComputeCubeCenter(project_response->world_coords, detection_index);
 
     moveit_msgs::msg::CollisionObject collision_object =
       MakeCollisionObject(obj_name, cube_center_base, detection.orientation);
@@ -74,7 +80,7 @@ int SpawnObjects::SpawnFromDetections(const std::vector<interfaces::msg::Detecti
     collision_objects.push_back(collision_object);
     spawned_objects_.insert(obj_name);
     spawned_count++;
-    index++;
+    detection_index++;
 
     RCLCPP_INFO(
       logger_,
@@ -121,11 +127,23 @@ int SpawnObjects::ClearAll()
   return object_ids.size();
 }
 
-// TODO: Change it later to color code the objects or make it more adaptable to different objects
-std::string SpawnObjects::MakeObjectName(int /*class_id*/, size_t index) const
+std::string SpawnObjects::MakeObjectName(int class_id, size_t index) const
 {
+  std::string object_prefix = "cube";
+  if (class_id == 0) {
+    object_prefix = "blue_cube";
+  } else if (class_id == 1) {
+    object_prefix = "green_cube";
+  } else if (class_id == 2) {
+    object_prefix = "orange_cube";
+  } else if (class_id == 3) {
+    object_prefix = "red_cube";
+  } else if (class_id == 4) {
+    object_prefix = "yellow_cube";
+  }
+
   std::ostringstream oss;
-  oss << "cube_" << index;
+  oss << object_prefix << "_" << index;
   return oss.str();
 }
 
@@ -200,5 +218,3 @@ moveit_msgs::msg::CollisionObject SpawnObjects::MakeCollisionObject(
 }
 
 }  // namespace spawn_objects
-
-

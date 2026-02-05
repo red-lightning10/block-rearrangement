@@ -79,7 +79,7 @@ class ActionExecutor(Node):
         """Execute a TAMP plan to achieve the given goal.
         
         Args:
-            goal: PDDL goal expression (e.g., "(on cube_0 cube_1)")
+            goal: PDDL goal expression (e.g., "(on red_cube_0 blue_cube_0)")
             max_steps: Maximum number of action steps to execute
         
         Returns:
@@ -182,7 +182,7 @@ class ActionExecutor(Node):
         
         Args:
             action_name: PDDL action name (e.g., "pick-up", "stack")
-            args: Action arguments (e.g., ["cube_0"] or ["cube_0", "cube_1"])
+            args: Action arguments (e.g., ["red_cube_0"] or ["red_cube_0", "blue_cube_0"])
         
         Returns:
             bool: True if action succeeded, False otherwise
@@ -229,8 +229,8 @@ class ActionExecutor(Node):
         """Check if the goal is satisfied in the given grounded states.
         
         Args:
-            goal: PDDL goal expression (e.g., "(on cube_0 cube_1)" or "(AND (on cube_0 cube_1) (on cube_1 cube_2))")
-            grounded_states: List of grounded predicate strings (e.g., ["ONTABLE cube_0", "CLEAR cube_1"])
+            goal: PDDL goal expression (e.g., "(on red_cube_0 blue_cube_0)" or "(AND (on red_cube_0 blue_cube_0) (on blue_cube_0 yellow_cube_0))")
+            grounded_states: List of grounded predicate strings (e.g., ["ONTABLE red_cube_0", "CLEAR blue_cube_0"])
         
         Returns:
             bool: True if goal is satisfied, False otherwise
@@ -273,7 +273,7 @@ def main(args=None):
             executor_node.execute_goal(goal)
         else:
             executor_node.get_logger().info('Usage: ros2 run task_planner action_executor "<PDDL goal>"')
-            executor_node.get_logger().info('Example: ros2 run task_planner action_executor "(on cube_0 cube_1)"')
+            executor_node.get_logger().info('Example: ros2 run task_planner action_executor "(on red_cube_0 blue_cube_0)"')
     except KeyboardInterrupt:
         pass
     finally:
@@ -283,6 +283,5 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-
 
 

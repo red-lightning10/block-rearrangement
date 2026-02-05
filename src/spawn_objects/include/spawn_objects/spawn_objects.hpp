@@ -50,5 +50,3 @@ private:
 }  // namespace spawn_objects
 
 #endif  // SPAWN_OBJECTS_SPAWN_OBJECTS_HPP_
-
-
